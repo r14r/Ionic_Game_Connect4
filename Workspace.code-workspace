@@ -1,0 +1,29 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "editor.formatOnSave": true,
+        "files.exclude": {
+            "**/.env": true,
+            "**/e2e": true,
+            "**/node_modules": true,
+            "**/.github": true,
+            "app/karma.conf.js": true,
+            "app/browserslist": true,
+            "app/angular.json": true,
+            "app/ionic.config.json": true,
+            "app/capacitor.config.json": true,
+            "app/package-lock.json": true,
+            "app/src/polyfills.ts": true,
+            "app/src/zone-flags.ts": true,
+            "app/src/main.ts": true,
+            "app/src/test.ts": true,
+            "app/src/environments": true,
+            "**/*.spec.json": true,
+            "**/*.spec.ts": true
+        }
+    }
+}

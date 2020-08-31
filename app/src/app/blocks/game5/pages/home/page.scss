@@ -1,0 +1,281 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+html,
+body {
+	background: #000;
+}
+
+/*vars*/
+$red: #c50878;
+$redhover: rgba(197, 9, 120, 0.3);
+$blue: #5039ff;
+$bluehover: rgba(80, 57, 255, 0.3);
+
+:root {
+	--blocksize: 20vw;
+	--boardsize: 60vw;
+	--spacing: 45vw;
+	--winmsgsize: 8vw;
+}
+@media (min-width: 750px) {
+	:root {
+		--blocksize: 150px;
+		--boardsize: 450px;
+		--spacing: 400px;
+		--winmsgsize: 3rem;
+	}
+}
+
+/*board*/
+.board-wrapper {
+	overflow: hidden;
+	margin: 3rem 0 0 calc(50vw - var(--boardsize) / 2);
+	width: var(--boardsize);
+}
+.board-outer {
+	width: 100vw;
+}
+.board-inner {
+	width: var(--boardsize);
+	height: var(--boardsize);
+}
+.board {
+	float: left;
+	position: relative;
+
+	&:before {
+		position: absolute;
+		left: -999px;
+		content: counter(player);
+	}
+	&:after {
+		content: counter(player, lower-roman);
+		display: inline-block;
+		height: 0;
+		background: grey;
+		font-family: monospace;
+		letter-spacing: var(--spacing);
+		overflow: hidden;
+	}
+}
+
+/*input radio*/
+.board input {
+	position: absolute;
+	width: var(--blocksize);
+	height: var(--blocksize);
+	cursor: pointer;
+	opacity: 0;
+	-webkit-appearance: none;
+
+	&:indeterminate {
+		display: block;
+	}
+	&:checked,
+	&:checked + input {
+		display: none;
+	}
+
+	&.blue {
+		background: $blue;
+	}
+	&.red {
+		background: $red;
+		left: auto !important;
+	}
+
+	&[name="pos11"] {
+		top: 0;
+		left: 0;
+		& + input {
+			right: calc(2 * var(--blocksize));
+		}
+	}
+	&[name="pos12"] {
+		top: 0;
+		left: var(--blocksize);
+		& + input {
+			right: var(--blocksize);
+		}
+	}
+	&[name="pos13"] {
+		top: 0;
+		left: calc(2 * var(--blocksize));
+		& + input {
+			right: 0;
+		}
+	}
+	&[name="pos21"] {
+		top: var(--blocksize);
+		left: 0;
+		& + input {
+			right: calc(2 * var(--blocksize));
+		}
+	}
+	&[name="pos22"] {
+		top: var(--blocksize);
+		left: var(--blocksize);
+		& + input {
+			right: var(--blocksize);
+		}
+	}
+	&[name="pos23"] {
+		top: var(--blocksize);
+		left: calc(2 * var(--blocksize));
+		& + input {
+			right: 0;
+		}
+	}
+	&[name="pos31"] {
+		top: calc(2 * var(--blocksize));
+		left: 0;
+		& + input {
+			right: calc(2 * var(--blocksize));
+		}
+	}
+	&[name="pos32"] {
+		top: calc(2 * var(--blocksize));
+		left: var(--blocksize);
+		& + input {
+			right: var(--blocksize);
+		}
+	}
+	&[name="pos33"] {
+		top: calc(2 * var(--blocksize));
+		left: calc(2 * var(--blocksize));
+		& + input {
+			right: 0;
+		}
+	}
+}
+
+/*marque*/
+.marque {
+	float: left;
+	display: flex;
+	padding: 1px;
+	width: var(--blocksize);
+	height: var(--blocksize);
+	justify-content: center;
+	align-items: center;
+	background: #1d1d1d;
+	background-clip: content-box;
+	&:before {
+		content: "";
+		position: static;
+		display: block;
+		width: 50%;
+		height: 50%;
+	}
+}
+
+/* marque hover*/
+.blue:hover + .red + .marque:before {
+	background: $bluehover;
+	border-radius: 3px;
+}
+.blue + .red:hover + .marque:before {
+	background: $redhover;
+	border-radius: 50%;
+}
+
+/* marque checked*/
+.blue:checked + .red + .marque {
+	counter-increment: player 2;
+	position: relative;
+	z-index: 100;
+	&:before {
+		background: $blue;
+		border-radius: 3px;
+	}
+}
+.blue + .red:checked + .marque {
+	counter-increment: player -2;
+	position: relative;
+	z-index: 100;
+	&:before {
+		background: $red;
+		border-radius: 50%;
+	}
+}
+
+/* results */
+@mixin winners($val) {
+	//1st line
+	#pos11-#{$val}:checked ~ #pos12-#{$val}:checked ~ #pos13-#{$val}:checked ~ #win-#{$val},
+	//2nd line
+	#pos21-#{$val}:checked ~ #pos22-#{$val}:checked ~ #pos23-#{$val}:checked ~ #win-#{$val},
+	//3rd line
+	#pos31-#{$val}:checked ~ #pos32-#{$val}:checked ~ #pos33-#{$val}:checked ~ #win-#{$val},
+	//1st column
+	#pos11-#{$val}:checked ~ #pos21-#{$val}:checked ~ #pos31-#{$val}:checked ~ #win-#{$val},
+	//2nd column
+	#pos12-#{$val}:checked ~ #pos22-#{$val}:checked ~ #pos32-#{$val}:checked ~ #win-#{$val},
+	//3rd column
+	#pos13-#{$val}:checked ~ #pos23-#{$val}:checked ~ #pos33-#{$val}:checked ~ #win-#{$val},
+	//1st diagonal
+	#pos11-#{$val}:checked ~ #pos22-#{$val}:checked ~ #pos33-#{$val}:checked ~ #win-#{$val},
+	//2nd diagonal
+	#pos13-#{$val}:checked ~ #pos22-#{$val}:checked ~ #pos31-#{$val}:checked ~ #win-#{$val} {
+		display: block;
+		& ~ #no-winner {
+			display: none;
+		}
+	}
+}
+
+.win-message {
+	position: absolute;
+	top: 0;
+	display: none;
+	height: 100%;
+	width: 100%;
+	color: #fff;
+	font-size: var(--winmsgsize);
+	font-weight: bold;
+	z-index: 200;
+	.wrapper {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: var(--boardsize);
+		height: var(--boardsize);
+		background: rgba(0, 0, 0, 0.6);
+	}
+}
+
+/*blue wins*/
+@include winners(blue);
+/*red wins*/
+@include winners(red);
+
+/**/
+form:valid {
+	#no-winner {
+		display: block;
+	}
+}
+/* reset */
+.actions {
+	clear: both;
+	margin-bottom: 2rem;
+	text-align: center;
+
+	button {
+		margin-top: 1rem;
+		padding: 0.8rem 2rem;
+		border: 1px solid #1d1d1d;
+		color: #555;
+		background: #000;
+		font-size: 0.9rem;
+		cursor: pointer;
+		transition: background 0.3s ease-out, border 0.3s ease-out;
+		&:hover {
+			border-color: #303030;
+			background: #0a0a0a;
+		}
+	}
+}
