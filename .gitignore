@@ -1,5 +1,10 @@
+**/.env.d
+
 .env
 
 **/node_modules/
 
 .env
+**/.env.d
+**/.env
+
